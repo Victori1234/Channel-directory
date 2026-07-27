@@ -421,50 +421,40 @@ function hideStorageBanner(){
 }
 
 async function loadBoards(){
-  if(typeof window.storage === 'undefined' || !window.storage){
-    showStorageBanner("Changes won't be saved", "This preview can't reach Claude's storage. Open this app as a live Claude artifact (not a downloaded HTML file) for edits to be saved and shared.");
+  const { data, error } = await supabase
+    .from('boards')
+    .select('*');
+
+  if(error){
+    console.error('Supabase load error:', error);
     boards = seedBoards;
     return;
   }
-  try{
-    const res = await window.storage.get(STORAGE_KEY, SHARED);
-    boards = res ? JSON.parse(res.value) : null;
-  }catch(e){
-    boards = null; // key just doesn't exist yet — normal on first run
-  }
-  if(!boards){
+
+  if(data && data.length > 0){
+    boards = data;
+  } else {
     boards = seedBoards;
     await saveBoards();
   }
 }
-
 async function saveBoards(){
-  if(!storageAvailable){
-    showToast("Not saved — storage isn't available in this preview", true);
-    return;
-  }
-  setSaveState('saving');
-  if(typeof window.storage === 'undefined' || !window.storage){
-    setSaveState('error');
-    showStorageBanner("Changes won't be saved", "This preview can't reach Claude's storage. Open this app as a live Claude artifact (not a downloaded HTML file) for edits to be saved and shared.");
-    return;
-  }
-  try{
-    const result = await window.storage.set(STORAGE_KEY, JSON.stringify(boards), SHARED);
-    if(!result){
-      setSaveState('error');
-      showToast('Save did not confirm — please try again', true);
-      return;
-    }
-    hideStorageBanner();
-    setSaveState('saved');
-  }catch(e){
-    console.error('Storage error', e);
-    setSaveState('error');
-    showToast('Could not save: ' + (e && e.message ? e.message : 'unknown error'), true);
-  }
-}
 
+  setSaveState('saving');
+
+  const { error } = await supabase
+    .from('boards')
+    .upsert(boards);
+
+  if(error){
+    console.error('Supabase save error:', error);
+    setSaveState('error');
+    showToast('Could not save', true);
+    return;
+  }
+
+  setSaveState('saved');
+}
 function setSaveState(state){
   const ind = document.getElementById('saveIndicator');
   const txt = document.getElementById('saveText');
