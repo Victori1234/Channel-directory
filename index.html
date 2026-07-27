@@ -375,6 +375,7 @@
 <div class="toast" id="toast"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
 const LOCATIONS = ['Europe','USA','Offshore','Worldwide'];
 
 const supabaseUrl = 'https://jzhuhrcitfcmaujvuvuk.supabase.co';
@@ -387,7 +388,7 @@ const supabase = window.supabase.createClient(
 );
 
 let storageAvailable = true;
-</script>
+
 const seedBoards = [
   {id:cid(), name:'Indeed EN', url:'https://indeed.com', language:'English', status:'go', locations:['Europe'], cost:'Daily budget', volume:'200-1000', login:'', comment:"Perfect match. But don't want freelance jobs, we are currently banned.", warning:''},
   {id:cid(), name:'Reed.co', url:'https://reed.co.uk', language:'English', status:'go', locations:['Europe'], cost:'70€/month', volume:'150', login:'1Password', comment:'Job ad per city.', warning:''},
