@@ -375,9 +375,18 @@
 <div class="toast" id="toast"></div>
 
 <script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 const LOCATIONS = ['Europe','USA','Offshore','Worldwide'];
-const STORAGE_KEY = 'boards';
-const SHARED = true; // everyone who opens this app sees and edits the same directory
+
+const supabaseUrl = 'https://jzhuhrcitfcmaujvuvuk.supabase.co';
+
+const supabaseKey = 'sb_publishable_Ob8R4ygT8M3p4FxC3mdJ3g_RlxabPcK';
+
+const supabase = window.supabase.createClient(
+  supabaseUrl,
+  supabaseKey
+);
+
 let storageAvailable = true;
 
 const seedBoards = [
